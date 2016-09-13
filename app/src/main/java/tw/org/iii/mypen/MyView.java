@@ -24,7 +24,7 @@ public class MyView extends View{
         Paint p = new Paint();
         p.setColor(Color.BLUE);
         p.setStrokeWidth(4);
-        canvas.drawLine(0,0,100,100,p);
+        canvas.drawLine(0,0,100,500,p);
     }
 
     @Override
