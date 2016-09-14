@@ -12,7 +12,7 @@ import android.view.View;
 /**
  * Created by user on 2016/9/13.
  */
-public class MyView extends View{
+public class MyView extends View {
     public MyView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -24,15 +24,17 @@ public class MyView extends View{
         Paint p = new Paint();
         p.setColor(Color.BLUE);
         p.setStrokeWidth(4);
-        canvas.drawLine(0,0,100,500,p);
+        canvas.drawLine(0, 0, 100, 500, p);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float ex = event.getX(), ey = event.getY();
-        Log.d("DK", "onTouchEvent:" + ex + " x " + ey);
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            Log.d("brad", "Down:" + ex + " x " + ey);
+        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            Log.d("brad", "Move:" + ex + " x " + ey);
+        }
         return true;
-
     }
-
 }
