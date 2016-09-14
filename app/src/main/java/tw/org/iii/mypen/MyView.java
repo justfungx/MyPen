@@ -15,6 +15,8 @@ import android.view.View;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by user on 2016/9/13.
@@ -24,8 +26,10 @@ public class MyView extends View {
     private Resources res;
     private boolean isInit;
     private int viewW, viewH;
-    private Bitmap bmpFly;
+    private Bitmap bmpFly ,bmpBg;
     private Matrix matrix;
+    private Timer timer;
+    private float flyX ,flyY,flyW,flyH,dx,dy;
 
 
 
@@ -34,17 +38,26 @@ public class MyView extends View {
         lines = new LinkedList<>();
         res = context.getResources();
         matrix = new Matrix();
+        timer = new Timer();
 
     }
 
+    Timer getTimer(){return timer;}
 
         private void init(){
 
             viewW = getWidth(); viewH = getHeight();
             float flyW = viewW / 8f, flyH = flyW;
 
+            bmpBg = BitmapFactory.decodeResource(res, R.drawable.bg);
+            bmpBg = resizeBitmap(bmpBg, viewW,viewH);
+
             bmpFly = BitmapFactory.decodeResource(res, R.drawable.fly);
             bmpFly = resizeBitmap(bmpFly,flyW,flyH);
+            dx = dy = 10;
+
+            timer.schedule(new RefreshView(), 0, 40);
+            timer.schedule(new FlyTask(), 1000, 100);
                 isInit = true;
         }
 
@@ -61,13 +74,9 @@ public class MyView extends View {
         super.onDraw(canvas);
         if (!isInit) init();
 
-        Bitmap bmpFly = BitmapFactory.decodeResource(res, R.drawable.fly);
-        float flyW = viewW / 8f, flyH = flyW;
-        Matrix matrix = new Matrix();
-        matrix.postScale(flyW/bmpFly.getWidth(), flyW/bmpFly.getHeight());
-        bmpFly = Bitmap.createBitmap(bmpFly,0,0,bmpFly.getWidth(),bmpFly.getHeight(),matrix, false);
 
         canvas.drawBitmap(bmpFly, 0,0,null);
+        canvas.drawBitmap(bmpFly, flyX, flyY,null);
 
 
 
@@ -79,6 +88,24 @@ public class MyView extends View {
                 canvas.drawLine(line.get(i - 1).get("x"), line.get(i - 1).get("y")
                         , line.get(i).get("x"), line.get(i).get("y"), p);
             }
+        }
+    }
+
+    private class RefreshView extends TimerTask {
+        @Override
+        public void run() {
+            //invalidate();
+            postInvalidate();
+        }
+    }
+
+
+    private class FlyTask extends TimerTask {
+        @Override
+        public void run() {
+            if (flyX<0 || flyX +flyW > viewW) dx *= -1;
+            if (flyY<0 || flyY + flyH > viewH) dy *= -1;
+            flyX += dx; flyY += dy;
         }
     }
 

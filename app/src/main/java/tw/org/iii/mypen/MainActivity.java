@@ -12,4 +12,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         myView =(MyView)findViewById(R.id.myView);
     }
+
+    @Override
+    public void finish() {
+        myView.getTimer().cancel();
+        super.finish();
+    }
 }
