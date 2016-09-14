@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,18 +22,37 @@ import java.util.LinkedList;
 public class MyView extends View {
     private LinkedList<LinkedList<HashMap<String,Float>>> lines;
     private Resources res;
+    private boolean isInit;
+    private int viewW, viewH;
+
 
     public MyView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        lines =  new LinkedList<>();
+        lines = new LinkedList<>();
         res = context.getResources();
-
     }
+
+
+        private void init(){
+            viewW = getWidth(); viewH = getHeight();
+            isInit = true;
+        }
+
+
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Bitmap bmpBall = BitmapFactory.decodeResource(res, R.drawable.fly);
-        canvas.drawBitmap(bmpBall, 0,0,null);
+        if (!isInit) init();
+
+        Bitmap bmpFly = BitmapFactory.decodeResource(res, R.drawable.fly);
+        float flyW = viewW / 8f, flyH = flyW;
+        Matrix matrix = new Matrix();
+        matrix.postScale(flyW/bmpFly.getWidth(), flyW/bmpFly.getHeight());
+        bmpFly = Bitmap.createBitmap(bmpFly,0,0,bmpFly.getWidth(),bmpFly.getHeight(),matrix, false);
+
+        canvas.drawBitmap(bmpFly, 0,0,null);
+
+
         super.onDraw(canvas);
         Paint p = new Paint();
         p.setColor(Color.BLUE);
