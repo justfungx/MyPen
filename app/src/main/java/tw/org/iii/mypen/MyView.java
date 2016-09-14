@@ -24,24 +24,41 @@ public class MyView extends View {
     private Resources res;
     private boolean isInit;
     private int viewW, viewH;
+    private Bitmap bmpFly;
+    private Matrix matrix;
+
 
 
     public MyView(Context context, AttributeSet attrs) {
         super(context, attrs);
         lines = new LinkedList<>();
         res = context.getResources();
+        matrix = new Matrix();
+
     }
 
 
         private void init(){
+
             viewW = getWidth(); viewH = getHeight();
-            isInit = true;
+            float flyW = viewW / 8f, flyH = flyW;
+
+            bmpFly = BitmapFactory.decodeResource(res, R.drawable.fly);
+            bmpFly = resizeBitmap(bmpFly,flyW,flyH);
+                isInit = true;
         }
 
+    public  Bitmap resizeBitmap(Bitmap src ,float newW ,float newH){
+        matrix.reset();
 
+        matrix.postScale(newW/src.getWidth(), newW/src.getHeight());
+        bmpFly = Bitmap.createBitmap(src,0,0,src.getWidth(),src.getHeight(),matrix, false);
+        return bmpFly;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         if (!isInit) init();
 
         Bitmap bmpFly = BitmapFactory.decodeResource(res, R.drawable.fly);
@@ -53,7 +70,7 @@ public class MyView extends View {
         canvas.drawBitmap(bmpFly, 0,0,null);
 
 
-        super.onDraw(canvas);
+
         Paint p = new Paint();
         p.setColor(Color.BLUE);
         p.setStrokeWidth(4);
